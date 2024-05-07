@@ -1,9 +1,9 @@
 {% macro add_database_or_schema_tags() %}
     {{ set_database_tag_value(
         'BLOCKCHAIN_NAME',
-        'xyz'
+        'LAVA'
     ) }}
-      {{ set_database_tag_value(
+    {{ set_database_tag_value(
         'BLOCKCHAIN_TYPE',
         'IBC'
     ) }}

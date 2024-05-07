@@ -2,9 +2,25 @@ version: 2
 
 sources:
   - name: crosschain
-    database: "{{ 'crosschain' if target.database == 'xyz' else 'crosschain_dev' }}"
+    database: "{{ 'crosschain' if target.database == 'LAVA' else 'crosschain_dev' }}"
     schema: core
     tables:
       - name: dim_date_hours
       - name: address_tags
       - name: dim_dates
+
+  - name: silver_crosschain
+    database: "{{ 'crosschain' if target.database == 'LAVA' else 'crosschain_dev' }}"
+    schema: silver
+    tables:
+      - name: number_sequence
+      
+  - name: bronze_streamline
+    database: streamline
+    schema: |
+     LAVA_DEV
+    tables:
+      - name: blocks
+      - name: tx_search
+      - name: txcount
+      - name: blockchain
