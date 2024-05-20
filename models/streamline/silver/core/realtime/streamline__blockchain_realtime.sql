@@ -3,25 +3,25 @@
     post_hook = fsc_utils.if_data_call_function_v2(
         func = 'streamline.udf_bulk_rest_api_v2',
         target = "{{this.schema}}.{{this.identifier}}",
-        params ={ "external_table" :"blocks",
+        params ={ "external_table" :"blockchain",
         "sql_limit" :"100000",
         "producer_batch_size" :"100000",
         "worker_batch_size" :"1000",
         "sql_source" :"{{this.identifier}}" }
     )
 ) }}
--- depends_on: {{ ref('streamline__complete_blocks') }}
+-- depends_on: {{ ref('streamline__complete_blockchain') }}
 WITH blocks AS (
 
     SELECT
         block_number
     FROM
-        {{ ref("streamline__blocks") }}
+        {{ ref("streamline__complete_blocks") }}
     EXCEPT
     SELECT
         block_number
     FROM
-        {{ ref("streamline__complete_blocks") }}
+        {{ ref("streamline__complete_blockchain") }}
     ORDER BY
         1
     LIMIT
@@ -45,9 +45,10 @@ SELECT
             'jsonrpc',
             '2.0',
             'method',
-            'block',
+            'blockchain',
             'params',
             ARRAY_CONSTRUCT(
+                block_number :: STRING,
                 block_number :: STRING
             )
         ),

@@ -1,29 +1,19 @@
 {{ config (
     materialized = "view",
-    tags = ['streamline_core_complete']
+    tags = ['streamline_view']
 ) }}
 
 SELECT
-    _id AS block_number,
-    REPLACE(
-        concat_ws('', '0x', to_char(block_number, 'XXXXXXXX')),
-        ' ',
-        ''
-    ) AS block_number_hex
+    _id AS block_number
 FROM
     {{ source(
-        'silver_crosschain',
+        'crosschain_silver',
         'number_sequence'
     ) }}
 WHERE
     _id <= (
         SELECT
-            COALESCE(
-                block_number,
-                0
-            )
+            MAX(block_number)
         FROM
-            {{ ref("streamline__get_chainhead") }}
+            {{ ref('streamline__chainhead') }}
     )
-ORDER BY
-    _id ASC

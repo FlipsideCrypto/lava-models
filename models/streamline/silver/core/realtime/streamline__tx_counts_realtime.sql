@@ -3,14 +3,14 @@
     post_hook = fsc_utils.if_data_call_function_v2(
         func = 'streamline.udf_bulk_rest_api_v2',
         target = "{{this.schema}}.{{this.identifier}}",
-        params ={ "external_table" :"blocks",
+        params ={ "external_table" :"txcount",
         "sql_limit" :"100000",
         "producer_batch_size" :"100000",
         "worker_batch_size" :"1000",
         "sql_source" :"{{this.identifier}}" }
     )
 ) }}
--- depends_on: {{ ref('streamline__complete_blocks') }}
+-- depends_on: {{ ref('streamline__complete_tx_counts') }}
 WITH blocks AS (
 
     SELECT
@@ -21,16 +21,37 @@ WITH blocks AS (
     SELECT
         block_number
     FROM
-        {{ ref("streamline__complete_blocks") }}
+        {{ ref("streamline__complete_tx_counts") }}
     ORDER BY
         1
     LIMIT
         50000
+), {# retry AS (
+SELECT
+    NULL AS A.block_number
+FROM
+    {{ ref("streamline__complete_tx_counts") }} A
+    JOIN {{ ref("silver__blockchain") }}
+    b
+    ON A.block_number = b.block_id
+WHERE
+    A.tx_count <> b.num_txs
+),
+#}
+combo AS (
+    SELECT
+        block_number
+    FROM
+        blocks {# UNION
+    SELECT
+        block_number
+    FROM
+        retry #}
 )
 SELECT
     ROUND(
         block_number,
-        -4
+        -3
     ) :: INT AS partition_key,
     {{ target.database }}.live.udf_api(
         'POST',
@@ -45,15 +66,20 @@ SELECT
             'jsonrpc',
             '2.0',
             'method',
-            'block',
+            'tx_search',
             'params',
             ARRAY_CONSTRUCT(
-                block_number :: STRING
+                'tx.height=' || block_number :: STRING,
+                TRUE,
+                '1',
+                '1',
+                'asc'
             )
         ),
         'Vault/prod/lava/node/mainnet'
-    ) AS request
+    ) AS request,
+    block_number
 FROM
-    blocks
+    combo
 ORDER BY
     block_number

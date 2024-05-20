@@ -9,7 +9,7 @@ sources:
       - name: address_tags
       - name: dim_dates
 
-  - name: silver_crosschain
+  - name: crosschain_silver
     database: "{{ 'crosschain' if target.database == 'LAVA' else 'crosschain_dev' }}"
     schema: silver
     tables:

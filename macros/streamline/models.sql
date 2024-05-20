@@ -4,7 +4,7 @@
     ) %}
     WITH meta AS (
         SELECT
-            job_created_time AS _inserted_timestamp,
+            last_modified AS inserted_timestamp,
             file_name,
             {{ partition_function }} AS partition_key
         FROM
@@ -17,7 +17,7 @@
         SELECT
             s.*,
             b.file_name,
-            _inserted_timestamp
+            inserted_timestamp
         FROM
             {{ source(
                 "bronze_streamline",
@@ -38,7 +38,7 @@
     ) %}
     WITH meta AS (
         SELECT
-            registered_on AS _inserted_timestamp,
+            registered_on AS inserted_timestamp,
             file_name,
             {{ partition_function }} AS partition_key
         FROM
@@ -51,7 +51,7 @@
 SELECT
     s.*,
     b.file_name,
-    _inserted_timestamp
+    inserted_timestamp
 FROM
     {{ source(
         "bronze_streamline",

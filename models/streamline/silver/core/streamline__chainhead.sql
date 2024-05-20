@@ -6,7 +6,7 @@
 SELECT
     {{ target.database }}.live.udf_api(
         'POST',
-        '{service}/{Authentication}',
+        '{Service}',
         OBJECT_CONSTRUCT(
             'Content-Type',
             'application/json',

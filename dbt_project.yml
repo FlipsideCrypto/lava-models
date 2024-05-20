@@ -5,6 +5,8 @@ name: "lava_models"
 version: "1.0.0"
 config-version: 2
 
+require-dbt-version: ">=1.7.0"
+
 # This setting configures which "profile" dbt uses for this project.
 profile: "lava"
 
@@ -58,8 +60,8 @@ models:
 
 vars:
   "dbt_date:time_zone": GMT
-  STREAMLINE_INVOKE_STREAMS: False
-  STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: False
+  STREAMLINE_INVOKE_STREAMS: true
+  STREAMLINE_USE_DEV_FOR_EXTERNAL_TABLES: true
   UPDATE_UDFS_AND_SPS: False
   UPDATE_SNOWFLAKE_TAGS: True
   OBSERV_FULL_TEST: False
@@ -75,17 +77,17 @@ vars:
   # The keys correspond to dbt profiles and are case sensitive
     dev:
       API_INTEGRATION: aws_lava_api_dev
-      EXTERNAL_FUNCTION_URI: 38869wpr2a.execute-api.us-east-1.amazonaws.com/stg/
+      EXTERNAL_FUNCTION_URI: 9yzaxt6bk8.execute-api.us-east-1.amazonaws.com/stg/
       ROLES:
         - AWS_LAMBDA_LAVA_API
         - INTERNAL_DEV
 
     prod:
       API_INTEGRATION: aws_lava_api
-      EXTERNAL_FUNCTION_URI: v11xbhhwwd.execute-api.us-east-1.amazonaws.com/prod/
+      EXTERNAL_FUNCTION_URI:  
       ROLES:
         - AWS_LAMBDA_LAVA_API
         - INTERNAL_DEV
-        - DBT_CLOUD_lava
+        - DBT_CLOUD_LAVA
 
 #### STREAMLINE 2.0 END ####

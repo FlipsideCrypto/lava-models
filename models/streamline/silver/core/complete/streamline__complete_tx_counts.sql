@@ -1,4 +1,4 @@
--- depends_on: {{ ref('bronze__streamline_blocks') }}
+-- depends_on: {{ ref('bronze__streamline_tx_counts') }}
 {{ config (
     materialized = "incremental",
     incremental_strategy = 'merge',
@@ -9,10 +9,11 @@
 ) }}
 
 SELECT
-    DATA :result :block :header :height :: INT AS block_number,
+    VALUE :BLOCK_NUMBER :: INT AS block_number,
+    DATA :result :total_count :: INT AS tx_count,
     {{ dbt_utils.generate_surrogate_key(
         ['block_number']
-    ) }} AS complete_blocks_id,
+    ) }} AS complete_tx_counts_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     file_name,
@@ -20,7 +21,7 @@ SELECT
 FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_blocks') }}
+{{ ref('bronze__streamline_tx_counts') }}
 WHERE
     inserted_timestamp >= (
         SELECT
@@ -29,7 +30,7 @@ WHERE
             {{ this }}
     )
 {% else %}
-    {{ ref('bronze__streamline_FR_blocks') }}
+    {{ ref('bronze__streamline_FR_tx_counts') }}
 {% endif %}
 
 qualify(ROW_NUMBER() over (PARTITION BY block_number
