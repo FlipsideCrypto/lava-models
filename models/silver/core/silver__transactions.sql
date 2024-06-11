@@ -7,7 +7,7 @@
     cluster_by = ['modified_timestamp::DATE','partition_key'],
     tags = ['core','full_test']
 ) }}
--- depends_on: {{ ref('bronze__streamline_transactions') }}
+-- depends_on: {{ ref('bronze__transactions') }}
 WITH base_table AS (
 
     SELECT
@@ -40,9 +40,9 @@ WITH base_table AS (
     FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_transactions') }}
+{{ ref('bronze__transactions') }}
 {% else %}
-    {{ ref('bronze__streamline_FR_transactions') }}
+    {{ ref('bronze__transactions_FR') }}
 {% endif %}
 WHERE
     tx_id IS NOT NULL

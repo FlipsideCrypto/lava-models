@@ -2,6 +2,9 @@
         model,
         partition_function
     ) %}
+    
+    {% set days = var("BRONZE_LOOKBACK_DAYS")%}
+  
     WITH meta AS (
         SELECT
             last_modified AS inserted_timestamp,
@@ -10,7 +13,7 @@
         FROM
             TABLE(
                 information_schema.external_table_file_registration_history(
-                    start_time => DATEADD('day', -3, CURRENT_TIMESTAMP()),
+                    start_time => DATEADD('day', -ABS({{days}}), CURRENT_TIMESTAMP()),
                     table_name => '{{ source( "bronze_streamline", model) }}')
                 ) A
             )

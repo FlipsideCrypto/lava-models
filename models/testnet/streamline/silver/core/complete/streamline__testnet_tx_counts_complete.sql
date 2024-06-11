@@ -1,4 +1,3 @@
--- depends_on: {{ ref('bronze__streamline_tx_counts') }}
 {{ config (
     materialized = "incremental",
     incremental_strategy = 'merge',
@@ -7,6 +6,7 @@
     merge_exclude_columns = ["inserted_timestamp"],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(block_number)"
 ) }}
+-- depends_on: {{ ref('bronze_testnet__tx_counts') }}
 
 SELECT
     VALUE :BLOCK_NUMBER :: INT AS block_number,
@@ -21,18 +21,17 @@ SELECT
 FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_tx_counts') }}
+{{ ref('bronze_testnet__tx_counts') }}
 WHERE
     inserted_timestamp >= (
         SELECT
-            MAX(modified_timestamp) modified_timestamp
+            COALESCE(MAX(modified_timestamp), '1970-01-01' :: DATE)
         FROM
-            {{ this }}
-    )
-{% else %}
-    {{ ref('bronze__streamline_FR_tx_counts') }}
-{% endif %}
+            {{ this }})
+        {% else %}
+            {{ ref('bronze_testnet__tx_counts_FR') }}
+        {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY block_number
-ORDER BY
-    inserted_timestamp DESC)) = 1
+        qualify(ROW_NUMBER() over (PARTITION BY block_number
+        ORDER BY
+            inserted_timestamp DESC)) = 1

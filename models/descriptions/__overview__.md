@@ -23,13 +23,21 @@ There is more information on how to use dbt docs in the last section of this doc
 
 
 **Fact Tables:**
+- [fact_blocks](#!/model/model.lava_models.core__fact_blocks)
+- [fact_msg_attributes](#!/model/model.lava_models.core__fact_msg_attributes)
+- [fact_msgs](#!/model/model.lava_models.core__fact_msgs)
+- [fact_transactions](#!/model/model.lava_models.core__fact_transactions)
+- [fact_transfers](#!/model/model.lava_models.core__fact_transfers)
 
 
+**Governance Fact  Tables:**
+- [fact_governance_proposal_deposits](#!/model/model.lava_models.gov__fact_governance_proposal_deposits)
+- [fact_governance_submit_proposal](#!/model/model.lava_models.gov__fact_governance_submit_proposal)
+- [fact_governance_validator_votes](#!/model/model.lava_models.gov__fact_governance_validator_votes)
+- [fact_governance_votes](#!/model/model.lava_models.gov__fact_governance_votes)
 
-**Convenience Tables:**
-
-
-
+**Stats EZ Tables:**
+- [ez_core_metrics_hourly](#!/model/model.lava_models.ez_core_metrics_hourly)
 
 ## **Data Model Overview**
 

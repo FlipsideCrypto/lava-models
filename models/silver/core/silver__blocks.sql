@@ -6,7 +6,7 @@
     cluster_by = ['modified_timestamp::DATE'],
     tags = ['core','full_test']
 ) }}
--- depends_on: {{ ref('bronze__streamline_blocks') }}
+-- depends_on: {{ ref('bronze__blocks') }}
 WITH base AS (
 
     SELECT
@@ -22,7 +22,7 @@ WITH base AS (
     FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_blocks') }}
+{{ ref('bronze__blocks') }}
 WHERE
     inserted_timestamp >= DATEADD(
         MINUTE,
@@ -36,7 +36,7 @@ WHERE
         )
     )
 {% else %}
-    {{ ref('bronze__streamline_FR_blocks') }}
+    {{ ref('bronze__blocks_FR') }}
 {% endif %}
 
 qualify(ROW_NUMBER() over(PARTITION BY chain_id, block_id

@@ -24,3 +24,7 @@ sources:
       - name: tx_search
       - name: txcount
       - name: blockchain
+      - name: testnet_blocks
+      - name: testnet_tx_search
+      - name: testnet_txcount
+      - name: testnet_blockchain

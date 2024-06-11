@@ -5,23 +5,23 @@
         target = "{{this.schema}}.{{this.identifier}}",
         params ={ "external_table" :"blockchain",
         "sql_limit" :"100000",
-        "producer_batch_size" :"100000",
+        "producer_batch_size" :"10000",
         "worker_batch_size" :"1000",
         "sql_source" :"{{this.identifier}}" }
     )
 ) }}
--- depends_on: {{ ref('streamline__complete_blockchain') }}
+-- depends_on: {{ ref('streamline__blockchain_complete') }}
 WITH blocks AS (
 
     SELECT
         block_number
     FROM
-        {{ ref("streamline__complete_blocks") }}
+        {{ ref("streamline__blocks_complete") }}
     EXCEPT
     SELECT
         block_number
     FROM
-        {{ ref("streamline__complete_blockchain") }}
+        {{ ref("streamline__blockchain_complete") }}
     ORDER BY
         1
     LIMIT

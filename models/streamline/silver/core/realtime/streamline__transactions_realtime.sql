@@ -5,21 +5,21 @@
         target = "{{this.schema}}.{{this.identifier}}",
         params ={ "external_table" :"tx_search",
         "sql_limit" :"100000",
-        "producer_batch_size" :"100000",
+        "producer_batch_size" :"10000",
         "worker_batch_size" :"1000",
         "exploded_key": "[\"result.txs\"]",
         "sql_source" :"{{this.identifier}}" }
     )
 ) }}
--- depends_on: {{ ref('streamline__complete_transactions') }}
--- depends_on: {{ ref('streamline__complete_tx_counts') }}
+-- depends_on: {{ ref('streamline__transactions_complete') }}
+-- depends_on: {{ ref('streamline__tx_counts_complete') }}
 WITH blocks AS (
 
     SELECT
         A.block_number,
         tx_count
     FROM
-        {{ ref("streamline__complete_tx_counts") }} A
+        {{ ref("streamline__tx_counts_complete") }} A
     WHERE
         tx_count > 0
 ),
@@ -57,7 +57,7 @@ numbers AS (
                 block_number,
                 page_number
             FROM
-                {{ ref("streamline__complete_transactions") }}
+                {{ ref("streamline__transactions_complete") }}
             ORDER BY
                 1
             LIMIT

@@ -5,12 +5,12 @@
         target = "{{this.schema}}.{{this.identifier}}",
         params ={ "external_table" :"txcount",
         "sql_limit" :"100000",
-        "producer_batch_size" :"100000",
+        "producer_batch_size" :"10000",
         "worker_batch_size" :"1000",
         "sql_source" :"{{this.identifier}}" }
     )
 ) }}
--- depends_on: {{ ref('streamline__complete_tx_counts') }}
+-- depends_on: {{ ref('streamline__tx_counts_complete') }}
 WITH blocks AS (
 
     SELECT
@@ -21,7 +21,7 @@ WITH blocks AS (
     SELECT
         block_number
     FROM
-        {{ ref("streamline__complete_tx_counts") }}
+        {{ ref("streamline__tx_counts_complete") }}
     ORDER BY
         1
     LIMIT

@@ -1,4 +1,3 @@
--- depends_on: {{ ref('bronze__streamline_blocks') }}
 {{ config (
     materialized = "incremental",
     incremental_strategy = 'merge',
@@ -7,13 +6,13 @@
     merge_exclude_columns = ["inserted_timestamp"],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(block_number)"
 ) }}
--- depends_on: {{ ref('bronze__streamline_blockchain') }}
+-- depends_on: {{ ref('bronze__blocks') }}
 
 SELECT
-    DATA :result :block_metas [0] :header :height :: INT AS block_number,
+    DATA :result :block :header :height :: INT AS block_number,
     {{ dbt_utils.generate_surrogate_key(
         ['block_number']
-    ) }} AS complete_blockchain_id,
+    ) }} AS complete_blocks_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     file_name,
@@ -21,7 +20,7 @@ SELECT
 FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_blockchain') }}
+{{ ref('bronze__blocks') }}
 WHERE
     inserted_timestamp >= (
         SELECT
@@ -30,7 +29,7 @@ WHERE
             {{ this }}
     )
 {% else %}
-    {{ ref('bronze__streamline_FR_blockchain') }}
+    {{ ref('bronze__blocks_FR') }}
 {% endif %}
 
 qualify(ROW_NUMBER() over (PARTITION BY block_number

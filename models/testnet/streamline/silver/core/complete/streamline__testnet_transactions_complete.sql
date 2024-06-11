@@ -1,19 +1,19 @@
--- depends_on: {{ ref('bronze__streamline_transactions') }}
 {{ config (
     materialized = "incremental",
     incremental_strategy = 'merge',
-    unique_key = "complete_transactions_id",
+    unique_key = "testnet_complete_transactions_id",
     cluster_by = "ROUND(block_number, -3)",
     merge_exclude_columns = ["inserted_timestamp"],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(block_number)"
 ) }}
+-- depends_on: {{ ref('bronze_testnet__transactions') }}
 
 SELECT
     DATA :height :: INT AS block_number,
     VALUE :PAGE_NUMBER :: INT AS page_number,
     {{ dbt_utils.generate_surrogate_key(
         ['block_number','page_number']
-    ) }} AS complete_transactions_id,
+    ) }} AS testnet_complete_transactions_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     file_name,
@@ -21,9 +21,9 @@ SELECT
 FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_transactions') }}
+{{ ref('bronze_testnet__transactions') }}
 {% else %}
-    {{ ref('bronze__streamline_FR_transactions') }}
+    {{ ref('bronze_testnet__transactions_FR') }}
 {% endif %}
 WHERE
     DATA <> '[]'
@@ -31,12 +31,11 @@ WHERE
 {% if is_incremental() %}
 AND inserted_timestamp >= (
     SELECT
-        MAX(modified_timestamp) modified_timestamp
+        COALESCE(MAX(modified_timestamp), '1970-01-01' :: DATE)
     FROM
-        {{ this }}
-)
-{% endif %}
+        {{ this }})
+    {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY complete_transactions_id
-ORDER BY
-    inserted_timestamp DESC)) = 1
+    qualify(ROW_NUMBER() over (PARTITION BY testnet_complete_transactions_id
+    ORDER BY
+        inserted_timestamp DESC)) = 1

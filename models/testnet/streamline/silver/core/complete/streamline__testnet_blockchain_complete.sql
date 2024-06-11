@@ -1,4 +1,3 @@
--- depends_on: {{ ref('bronze__streamline_blocks') }}
 {{ config (
     materialized = "incremental",
     incremental_strategy = 'merge',
@@ -7,12 +6,13 @@
     merge_exclude_columns = ["inserted_timestamp"],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(block_number)"
 ) }}
+-- depends_on: {{ ref('bronze_testnet__blockchain') }}
 
 SELECT
-    DATA :result :block :header :height :: INT AS block_number,
+    DATA :result :block_metas [0] :header :height :: INT AS block_number,
     {{ dbt_utils.generate_surrogate_key(
         ['block_number']
-    ) }} AS complete_blocks_id,
+    ) }} AS testnet_complete_blockchain_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     file_name,
@@ -20,18 +20,17 @@ SELECT
 FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_blocks') }}
+{{ ref('bronze_testnet__blockchain') }}
 WHERE
     inserted_timestamp >= (
         SELECT
-            MAX(modified_timestamp) modified_timestamp
+            COALESCE(MAX(modified_timestamp), '1970-01-01' :: DATE)
         FROM
-            {{ this }}
-    )
-{% else %}
-    {{ ref('bronze__streamline_FR_blocks') }}
-{% endif %}
+            {{ this }})
+        {% else %}
+            {{ ref('bronze_testnet__blockchain_FR') }}
+        {% endif %}
 
-qualify(ROW_NUMBER() over (PARTITION BY block_number
-ORDER BY
-    inserted_timestamp DESC)) = 1
+        qualify(ROW_NUMBER() over (PARTITION BY block_number
+        ORDER BY
+            inserted_timestamp DESC)) = 1
