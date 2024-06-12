@@ -4,9 +4,10 @@
 ) }}
 
 SELECT
+    1356509 block_number {# SELECT
     {{ target.database }}.live.udf_api(
         'POST',
-        '{service}/{Authentication}',
+        '{Service}',
         OBJECT_CONSTRUCT(
             'Content-Type',
             'application/json',
@@ -23,5 +24,5 @@ SELECT
             'params',
             []
         ),
-        'Vault/prod/lava/node/mainnet'
-    ) :data :result :sync_info :latest_block_height :: INT AS block_number
+        'Vault/prod/lava/node/testnet/rpc'
+    ) :data :result :sync_info :latest_block_height :: INT AS block_number #}

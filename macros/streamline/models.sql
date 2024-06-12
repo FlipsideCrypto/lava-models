@@ -2,22 +2,25 @@
         model,
         partition_function
     ) %}
+    
+    {% set days = var("BRONZE_LOOKBACK_DAYS")%}
+  
     WITH meta AS (
         SELECT
-            job_created_time AS _inserted_timestamp,
+            last_modified AS inserted_timestamp,
             file_name,
             {{ partition_function }} AS partition_key
         FROM
             TABLE(
                 information_schema.external_table_file_registration_history(
-                    start_time => DATEADD('day', -3, CURRENT_TIMESTAMP()),
+                    start_time => DATEADD('day', -ABS({{days}}), CURRENT_TIMESTAMP()),
                     table_name => '{{ source( "bronze_streamline", model) }}')
                 ) A
             )
         SELECT
             s.*,
             b.file_name,
-            _inserted_timestamp
+            inserted_timestamp
         FROM
             {{ source(
                 "bronze_streamline",
@@ -38,7 +41,7 @@
     ) %}
     WITH meta AS (
         SELECT
-            registered_on AS _inserted_timestamp,
+            registered_on AS inserted_timestamp,
             file_name,
             {{ partition_function }} AS partition_key
         FROM
@@ -51,7 +54,7 @@
 SELECT
     s.*,
     b.file_name,
-    _inserted_timestamp
+    inserted_timestamp
 FROM
     {{ source(
         "bronze_streamline",

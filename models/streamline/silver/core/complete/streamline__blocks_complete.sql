@@ -1,10 +1,12 @@
--- depends_on: {{ ref('bronze__streamline_blocks') }}
 {{ config (
     materialized = "incremental",
+    incremental_strategy = 'merge',
     unique_key = "block_number",
     cluster_by = "ROUND(block_number, -3)",
+    merge_exclude_columns = ["inserted_timestamp"],
     post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION on equality(block_number)"
 ) }}
+-- depends_on: {{ ref('bronze__blocks') }}
 
 SELECT
     DATA :result :block :header :height :: INT AS block_number,
@@ -13,23 +15,23 @@ SELECT
     ) }} AS complete_blocks_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
-    _inserted_timestamp,
+    file_name,
     '{{ invocation_id }}' AS _invocation_id
 FROM
 
 {% if is_incremental() %}
-{{ ref('bronze__streamline_blocks') }}
+{{ ref('bronze__blocks') }}
 WHERE
-    _inserted_timestamp >= (
+    inserted_timestamp >= (
         SELECT
-            MAX(_inserted_timestamp) _inserted_timestamp
+            MAX(modified_timestamp) modified_timestamp
         FROM
             {{ this }}
     )
 {% else %}
-    {{ ref('bronze__streamline_FR_blocks') }}
+    {{ ref('bronze__blocks_FR') }}
 {% endif %}
 
 qualify(ROW_NUMBER() over (PARTITION BY block_number
 ORDER BY
-    _inserted_timestamp DESC)) = 1
+    inserted_timestamp DESC)) = 1

@@ -5,12 +5,12 @@
         target = "{{this.schema}}.{{this.identifier}}",
         params ={ "external_table" :"blocks",
         "sql_limit" :"100000",
-        "producer_batch_size" :"100000",
-        "worker_batch_size" :"500",
+        "producer_batch_size" :"10000",
+        "worker_batch_size" :"1000",
         "sql_source" :"{{this.identifier}}" }
     )
 ) }}
--- depends_on: {{ ref('streamline__complete_blocks') }}
+-- depends_on: {{ ref('streamline__blocks_complete') }}
 WITH blocks AS (
 
     SELECT
@@ -21,18 +21,20 @@ WITH blocks AS (
     SELECT
         block_number
     FROM
-        {{ ref("streamline__complete_blocks") }}
+        {{ ref("streamline__blocks_complete") }}
     ORDER BY
         1
+    LIMIT
+        50000
 )
 SELECT
     ROUND(
         block_number,
-        -3
+        -4
     ) :: INT AS partition_key,
     {{ target.database }}.live.udf_api(
         'POST',
-        '{service}',
+        '{Service}',
         OBJECT_CONSTRUCT(
             'Content-Type',
             'application/json'
