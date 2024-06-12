@@ -22,11 +22,8 @@ WITH blocks AS (
         block_number
     FROM
         {{ ref("streamline__tx_counts_complete") }}
-    ORDER BY
-        1
-    LIMIT
-        50000
-), {# retry AS (
+),
+{# retry AS (
 SELECT
     NULL AS A.block_number
 FROM

@@ -22,10 +22,6 @@ WITH blocks AS (
         block_number
     FROM
         {{ ref("streamline__blockchain_complete") }}
-    ORDER BY
-        1
-    LIMIT
-        50000
 )
 SELECT
     ROUND(
