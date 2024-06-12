@@ -5,7 +5,10 @@
 
     {% if target.name == "prod" %}
         {% set sql %}
-        {% endset %}
+        CREATE api integration IF NOT EXISTS aws_lava_api api_provider = aws_api_gateway api_aws_role_arn = 'arn:aws:iam::924682671219:role/lava-api-prod-rolesnowflakeudfsAF733095-beRq5VXtxXcA' api_allowed_prefixes = (
+            'https://vnmhcb1q2j.execute-api.us-east-1.amazonaws.com/prod/'
+        ) enabled = TRUE;
+{% endset %}
         {% do run_query(sql) %}
     {% else %}
         {% set sql %}
