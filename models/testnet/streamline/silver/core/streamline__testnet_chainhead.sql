@@ -4,7 +4,6 @@
 ) }}
 
 SELECT
-SELECT
     {{ target.database }}.live.udf_api(
         'POST',
         '{Service}',
