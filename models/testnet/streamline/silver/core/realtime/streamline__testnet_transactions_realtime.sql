@@ -60,8 +60,6 @@ numbers AS (
                 page_number
             FROM
                 {{ ref("streamline__testnet_transactions_complete") }}
-            ORDER BY
-                1
         )
     SELECT
         ROUND(

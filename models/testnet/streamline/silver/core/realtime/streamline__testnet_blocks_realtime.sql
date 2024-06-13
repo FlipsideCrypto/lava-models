@@ -24,8 +24,6 @@ WITH blocks AS (
         block_number
     FROM
         {{ ref("streamline__testnet_blocks_complete") }}
-    ORDER BY
-        1 DESC
 )
 SELECT
     ROUND(

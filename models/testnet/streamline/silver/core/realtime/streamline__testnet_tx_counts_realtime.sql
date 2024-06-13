@@ -24,8 +24,6 @@ WITH blocks AS (
         block_number
     FROM
         {{ ref("streamline__testnet_tx_counts_complete") }}
-    ORDER BY
-        1 DESC
 ),
 {# retry AS (
 SELECT

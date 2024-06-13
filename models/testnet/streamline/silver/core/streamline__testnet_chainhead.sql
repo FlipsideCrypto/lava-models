@@ -4,7 +4,7 @@
 ) }}
 
 SELECT
-    1356509 block_number {# SELECT
+SELECT
     {{ target.database }}.live.udf_api(
         'POST',
         '{Service}',
@@ -25,4 +25,4 @@ SELECT
             []
         ),
         'Vault/prod/lava/node/testnet/rpc'
-    ) :data :result :sync_info :latest_block_height :: INT AS block_number #}
+    ) :data :result :sync_info :latest_block_height :: INT AS block_number
