@@ -7,7 +7,7 @@ models:
           combination_of_columns:
             - CHAIN_ID
             - BLOCK_ID
-      - sequence_gaps:
+      - fsc_utils.sequence_gaps:
           column_name: BLOCK_ID
           config:
             severity: error

@@ -1,17 +1,25 @@
 version: 2
 models:
-  - name: test_silver__msgs_recent
+  - name: test_core__msg_attributes_recent
 
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - TX_ID
             - MSG_INDEX
+            - ATTRIBUTE_INDEX
     columns:
       - name: BLOCK_ID
         description: "{{ doc('block_id') }}"
         tests:
           - not_null
+      - name: BLOCK_TIMESTAMP
+        description: "{{ doc('block_timestamp') }}"
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
       - name: TX_ID
         description: "{{ doc('tx_id') }}"
         tests: 
@@ -26,8 +34,14 @@ models:
       - name: MSG_INDEX
         description: "{{ doc('msg_index') }}"
         tests: 
-          - not_null
+          - not_null 
       - name: MSG_TYPE
         description: "{{ doc('msg_type') }}"
         tests: 
           - not_null
+      - name: ATTRIBUTE_KEY
+        description: "They key from the key-value pair from the message attribute"
+        tests: 
+          - not_null
+      - name: ATTRIBUTE_VALUE
+        description: "They value from the key-value pair from the message attribute"

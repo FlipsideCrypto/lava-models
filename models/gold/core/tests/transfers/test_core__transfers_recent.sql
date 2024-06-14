@@ -6,22 +6,22 @@
 WITH last_3_days AS (
 
     SELECT
-        block_id
+        block_date
     FROM
         {{ ref("_max_block_by_date") }}
         qualify ROW_NUMBER() over (
             ORDER BY
-                block_id DESC
+                block_date DESC
         ) = 3
 )
 SELECT
     *
 FROM
-    {{ ref('silver__msgs') }}
+    {{ ref('core__fact_transfers') }}
 WHERE
-    block_id >= (
+    block_timestamp :: DATE >= (
         SELECT
-            block_id
+            block_date
         FROM
             last_3_days
     )

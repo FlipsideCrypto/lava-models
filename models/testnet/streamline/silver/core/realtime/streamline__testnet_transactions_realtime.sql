@@ -4,8 +4,8 @@
         func = 'streamline.udf_bulk_rest_api_v2',
         target = "{{this.schema}}.{{this.identifier}}",
         params ={ "external_table" :"testnet_tx_search",
-        "sql_limit" :"5000",
-        "producer_batch_size" :"25",
+        "sql_limit" :"10000",
+        "producer_batch_size" :"50",
         "worker_batch_size" :"25",
         "exploded_key": "[\"result.txs\"]",
         "sql_source" :"{{this.identifier}}" }
@@ -22,7 +22,6 @@ WITH blocks AS (
         {{ ref("streamline__testnet_tx_counts_complete") }} A
     WHERE
         tx_count > 0
-        AND block_number >= 713023
         AND block_number <> 714114
 ),
 numbers AS (

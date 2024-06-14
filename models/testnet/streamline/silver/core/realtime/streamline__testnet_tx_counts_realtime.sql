@@ -4,7 +4,7 @@
         func = 'streamline.udf_bulk_rest_api_v2',
         target = "{{this.schema}}.{{this.identifier}}",
         params ={ "external_table" :"testnet_txcount",
-        "sql_limit" :"50000",
+        "sql_limit" :"500",
         "producer_batch_size" :"50",
         "worker_batch_size" :"50",
         "sql_source" :"{{this.identifier}}" }
@@ -18,7 +18,7 @@ WITH blocks AS (
     FROM
         {{ ref("streamline__testnet_blocks") }}
     WHERE
-        block_number <> 714114
+        block_number = 714114
     EXCEPT
     SELECT
         block_number

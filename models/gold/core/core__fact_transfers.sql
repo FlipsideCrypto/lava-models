@@ -18,7 +18,7 @@ SELECT
     sender,
     receiver,
     amount,
-    denom,
+    currency,
     {{ dbt_utils.generate_surrogate_key(
         ['tx_id','msg_index']
     ) }} AS fact_transfers_id,

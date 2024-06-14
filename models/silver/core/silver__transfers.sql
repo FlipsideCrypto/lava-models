@@ -104,7 +104,7 @@ new_fin AS (
             ' ',
             0
         ) AS amount_INT,
-        RIGHT(A.amount, LENGTH(A.amount) - LENGTH(SPLIT_PART(TRIM(REGEXP_REPLACE(A.amount, '[^[:digit:]]', ' ')), ' ', 0))) AS denom,
+        RIGHT(A.amount, LENGTH(A.amount) - LENGTH(SPLIT_PART(TRIM(REGEXP_REPLACE(A.amount, '[^[:digit:]]', ' ')), ' ', 0))) AS currency,
         A.inserted_timestamp,
         A.modified_timestamp,
         A._invocation_id
@@ -128,7 +128,7 @@ SELECT
         )
         ELSE amount_int
     END :: INT AS amount,
-    denom,
+    currency,
     {{ dbt_utils.generate_surrogate_key(
         ['tx_id','msg_index']
     ) }} AS transfers_id,

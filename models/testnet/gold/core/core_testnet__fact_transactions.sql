@@ -89,7 +89,7 @@ SELECT
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    {{ ref('silver__transactions') }}
+    {{ ref('silver_testnet__transactions') }}
     t
     LEFT OUTER JOIN {{ ref('silver_testnet__blocks') }}
     b
