@@ -3,9 +3,9 @@ run-name: dbt_run_core
 
 on:
   workflow_dispatch:
-  schedule:
-    # Runs "at minute 7 and 37, every hour" (see https://crontab.guru)
-    - cron: '10 * * * *'
+  # schedule:
+  #   # Runs "at minute 7 and 37, every hour" (see https://crontab.guru)
+  #   - cron: '10 * * * *'
 
 env:
   USE_VARS: "${{ vars.USE_VARS }}"
