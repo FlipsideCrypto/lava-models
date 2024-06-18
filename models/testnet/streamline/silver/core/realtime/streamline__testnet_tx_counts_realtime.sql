@@ -18,7 +18,7 @@ WITH blocks AS (
     FROM
         {{ ref("streamline__testnet_blocks") }}
     WHERE
-        block_number = 714114
+        block_number <> 714114
     EXCEPT
     SELECT
         block_number
