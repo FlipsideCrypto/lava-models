@@ -5,8 +5,8 @@
         target = "{{this.schema}}.{{this.identifier}}",
         params ={ "external_table" :"testnet_blockchain",
         "sql_limit" :"250",
-        "producer_batch_size" :"25",
-        "worker_batch_size" :"25",
+        "producer_batch_size" :"10",
+        "worker_batch_size" :"10",
         "sql_source" :"{{this.identifier}}" }
     )
 ) }}
