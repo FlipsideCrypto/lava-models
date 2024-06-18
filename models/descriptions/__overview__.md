@@ -20,6 +20,7 @@ There is more information on how to use dbt docs in the last section of this doc
 ### Core Tables (`lava`.`CORE`.`<table_name>`)
 
 **Dimension Tables:**
+- [dim_labels](#!/model/model.lava_models.core__dim_labels)
 
 **Fact Tables:**
 - [fact_blocks](#!/model/model.lava_models.core__fact_blocks)
