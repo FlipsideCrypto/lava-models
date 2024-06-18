@@ -28,3 +28,8 @@ sources:
       - name: testnet_tx_search
       - name: testnet_txcount
       - name: testnet_blockchain
+  - name: github_actions
+    database: LAVA
+    schema: github_actions
+    tables:
+      - name: workflows
