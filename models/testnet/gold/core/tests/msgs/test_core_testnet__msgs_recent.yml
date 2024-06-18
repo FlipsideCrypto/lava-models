@@ -1,0 +1,33 @@
+version: 2
+models:
+  - name: test_core_testnet__msgs_recent
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - TX_ID
+            - MSG_INDEX
+    columns:
+      - name: BLOCK_ID
+        description: "{{ doc('block_id') }}"
+        tests:
+          - not_null
+      - name: TX_ID
+        description: "{{ doc('tx_id') }}"
+        tests: 
+          - not_null
+      - name: TX_SUCCEEDED
+        tests:
+          - not_null
+      - name: MSG_GROUP
+        description: "{{ doc('msg_group') }}"
+      - name: MSG_SUB_GROUP
+        description: "{{ doc('msg_sub_group') }}"
+      - name: MSG_INDEX
+        description: "{{ doc('msg_index') }}"
+        tests: 
+          - not_null
+      - name: MSG_TYPE
+        description: "{{ doc('msg_type') }}"
+        tests: 
+          - not_null

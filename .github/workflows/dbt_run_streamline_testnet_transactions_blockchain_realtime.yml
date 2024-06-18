@@ -3,9 +3,9 @@ run-name: dbt_run_streamline_testnet_transactions_blockchain_realtime
 
 on:
   workflow_dispatch:
-  schedule:
-    # Runs "at minute 27 and 57, every hour" (see https://crontab.guru)
-    - cron: '0 * * * *'
+  # schedule:
+  #   # Runs "at minute 27 and 57, every hour" (see https://crontab.guru)
+  #   - cron: '0 * * * *'
 
 env:
   DBT_PROFILES_DIR: ./

@@ -1,7 +1,7 @@
 version: 2
 models:
-  - name: core__fact_blocks
-    description: Records of all blocks that have occurred on Lava, dating back to the genesis block. 
+  - name: core_testnet__fact_blocks
+    description: Records of  blocks that have occurred on Lava testnet
     tests:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:

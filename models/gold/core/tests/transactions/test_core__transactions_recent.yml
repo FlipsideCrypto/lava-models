@@ -1,0 +1,26 @@
+version: 2
+models:
+  - name: test_core__transactions_recent
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - TX_ID
+    columns:
+      - name: BLOCK_ID
+        description: "{{ doc('block_id') }}"
+      - name: TX_FROM
+        tests: 
+          - not_null: 
+              where: tx_succeeded = 'TRUE'
+      - name: FEE
+        tests: 
+          - not_null
+          - name: BLOCK_TIMESTAMP
+        tests:
+          - not_null
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: hour
+              interval: 3
+   
+  

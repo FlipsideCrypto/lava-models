@@ -93,5 +93,12 @@ vars:
         - AWS_LAMBDA_LAVA_API
         - INTERNAL_DEV
         - DBT_CLOUD_LAVA
+    prod-2xl:
+      API_INTEGRATION: aws_lava_api
+      EXTERNAL_FUNCTION_URI:  vnmhcb1q2j.execute-api.us-east-1.amazonaws.com/prod/
+      ROLES:
+        - AWS_LAMBDA_LAVA_API
+        - INTERNAL_DEV
+        - DBT_CLOUD_LAVA
 
 #### STREAMLINE 2.0 END ####
