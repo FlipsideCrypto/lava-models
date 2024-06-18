@@ -1,5 +1,5 @@
 {{ config(
-  materialized = 'view',
+  materialized = 'ephemeral',
   tags = ['core_testnet','full_test']
 ) }}
 {# {{ config(
