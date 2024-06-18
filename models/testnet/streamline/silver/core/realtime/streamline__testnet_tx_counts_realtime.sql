@@ -81,4 +81,4 @@ SELECT
 FROM
     combo
 ORDER BY
-    block_number DESC
+    block_number

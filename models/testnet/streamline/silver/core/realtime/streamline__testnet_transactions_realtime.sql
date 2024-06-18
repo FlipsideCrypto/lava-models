@@ -95,4 +95,4 @@ numbers AS (
     FROM
         blocks_with_page_numbers
     ORDER BY
-        block_number DESC
+        block_number
