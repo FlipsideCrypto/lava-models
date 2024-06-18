@@ -1,17 +1,12 @@
 {{ config(
-  materialized = 'ephemeral',
+  materialized = 'incremental',
+  incremental_predicates = ['DBT_INTERNAL_DEST.partition_key >= (select min(partition_key) from ' ~ generate_tmp_view_name(this) ~ ')'],
+  unique_key = ["tx_id","msg_index"],
+  incremental_strategy = 'merge',
+  merge_exclude_columns = ["inserted_timestamp"],
+  cluster_by = ['modified_timestamp::DATE','partition_key'],
   tags = ['core_testnet','full_test']
 ) }}
-{# {{ config(
-materialized = 'incremental',
-incremental_predicates = ['DBT_INTERNAL_DEST.partition_key >= (select min(partition_key) from ' ~ generate_tmp_view_name(this) ~ ')'],
-unique_key = ["tx_id","msg_index"],
-incremental_strategy = 'merge',
-merge_exclude_columns = ["inserted_timestamp"],
-cluster_by = ['modified_timestamp::DATE','partition_key'],
-tags = ['core','full_test']
-) }}
-#}
 {# post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(msg_type, msg:attributes);", #}
 WITH b AS (
 
@@ -34,15 +29,24 @@ WITH b AS (
     ) AS is_module,
     msg :attributes [0] :key :: STRING AS attribute_key,
     msg :attributes [0] :value :: STRING AS attribute_value,
-    partition_key,
-    inserted_timestamp,
-    modified_timestamp,
-    _invocation_id
+    partition_key
   FROM
     {{ ref('silver_testnet__transactions') }} A,
     LATERAL FLATTEN(
       input => A.msgs
     )
+
+{% if is_incremental() %}
+WHERE
+  modified_timestamp >= (
+    SELECT
+      MAX(
+        modified_timestamp
+      )
+    FROM
+      {{ this }}
+  )
+{% endif %}
 ),
 prefinal AS (
   SELECT
@@ -61,10 +65,7 @@ prefinal AS (
     is_module,
     attribute_key,
     attribute_value,
-    partition_key,
-    inserted_timestamp,
-    modified_timestamp,
-    _invocation_id
+    partition_key
   FROM
     b
 ),
@@ -112,10 +113,10 @@ SELECT
   {{ dbt_utils.generate_surrogate_key(
     ['a.tx_id','a.msg_index']
   ) }} AS msgs_id,
-  inserted_timestamp,
-  modified_timestamp,
+  SYSDATE() AS inserted_timestamp,
+  SYSDATE() AS modified_timestamp,
   partition_key,
-  _invocation_id
+  '{{ invocation_id }}' AS _invocation_id
 FROM
   prefinal A
   LEFT JOIN grp b

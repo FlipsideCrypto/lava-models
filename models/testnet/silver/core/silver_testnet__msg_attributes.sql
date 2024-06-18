@@ -1,5 +1,10 @@
 {{ config(
-  materialized = 'ephemeral',
+  materialized = 'incremental',
+  incremental_predicates = ['DBT_INTERNAL_DEST.block_timestamp::DATE >= (select min(block_timestamp::DATE) from ' ~ generate_tmp_view_name(this) ~ ')'],
+  unique_key = ["tx_id","msg_index","attribute_index"],
+  incremental_strategy = 'merge',
+  merge_exclude_columns = ["inserted_timestamp"],
+  cluster_by = ['block_timestamp::DATE','modified_timestamp::DATE'],
   tags = ['core_testnet','full_test']
 ) }}
 
@@ -18,12 +23,24 @@ SELECT
   {{ dbt_utils.generate_surrogate_key(
     ['tx_id','msg_index','attribute_index']
   ) }} AS msg_attributes_id,
-  inserted_timestamp,
-  modified_timestamp,
-  _invocation_id
+  SYSDATE() AS inserted_timestamp,
+  SYSDATE() AS modified_timestamp,
+  '{{ invocation_id }}' AS _invocation_id
 FROM
   {{ ref('core_testnet__fact_msgs') }} A,
   LATERAL FLATTEN(
     input => A.msg,
     path => 'attributes'
   ) b
+
+{% if is_incremental() %}
+WHERE
+  modified_timestamp >= (
+    SELECT
+      MAX(
+        modified_timestamp
+      )
+    FROM
+      {{ this }}
+  )
+{% endif %}

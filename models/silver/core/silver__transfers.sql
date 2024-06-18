@@ -1,5 +1,10 @@
 {{ config(
-    materialized = 'view',
+    materialized = 'incremental',
+    incremental_predicates = ['DBT_INTERNAL_DEST.block_timestamp::DATE >= (select min(block_timestamp::DATE) from ' ~ generate_tmp_view_name(this) ~ ')'],
+    unique_key = ['tx_id','msg_index'],
+    incremental_strategy = 'merge',
+    merge_exclude_columns = ["inserted_timestamp"],
+    cluster_by = ['block_timestamp::DATE','modified_timestamp::DATE'],
     tags = ['core','full_test']
 ) }}
 
@@ -26,6 +31,17 @@ WITH base_atts AS (
             'tx',
             'transfer'
         )
+
+{% if is_incremental() %}
+AND modified_timestamp >= (
+    SELECT
+        MAX(
+            modified_timestamp
+        )
+    FROM
+        {{ this }}
+)
+{% endif %}
 ),
 all_transfers AS (
     SELECT

@@ -17,7 +17,7 @@ WITH atts AS (
         attribute_value,
         modified_timestamp
     FROM
-        {{ ref('silver_testnet__msg_attributes') }}
+        {{ ref('core_testnet__fact_msg_attributes') }}
     WHERE
         msg_type = 'tx'
         AND attribute_key IN (
