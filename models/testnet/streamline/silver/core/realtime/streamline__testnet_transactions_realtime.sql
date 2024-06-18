@@ -4,7 +4,7 @@
         func = 'streamline.udf_bulk_rest_api_v2',
         target = "{{this.schema}}.{{this.identifier}}",
         params ={ "external_table" :"testnet_tx_search",
-        "sql_limit" :"500",
+        "sql_limit" :"2000",
         "producer_batch_size" :"40",
         "worker_batch_size" :"20",
         "exploded_key": "[\"result.txs\"]",
