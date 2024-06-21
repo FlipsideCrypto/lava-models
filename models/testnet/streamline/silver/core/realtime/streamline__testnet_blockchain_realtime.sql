@@ -15,7 +15,7 @@
 WITH blocks AS (
 
     SELECT
-        block_number
+        block_id AS block_number
     FROM
         {{ ref("silver_testnet__blocks") }}
     EXCEPT
