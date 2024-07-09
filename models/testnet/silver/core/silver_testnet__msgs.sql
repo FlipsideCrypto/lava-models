@@ -38,7 +38,9 @@ WITH b AS (
 
 {% if is_incremental() %}
 WHERE
-  modified_timestamp >= (
+  {# modified_timestamp >= DATEADD(
+  'minute',
+  -45,(
     SELECT
       MAX(
         modified_timestamp
@@ -46,6 +48,8 @@ WHERE
     FROM
       {{ this }}
   )
+) #}
+block_id >= 713035
 {% endif %}
 ),
 prefinal AS (

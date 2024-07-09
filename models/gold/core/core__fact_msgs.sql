@@ -36,12 +36,15 @@ WHERE
     GREATEST(
         m.modified_timestamp,
         b.modified_timestamp
-    ) >= (
-        SELECT
-            MAX(
-                modified_timestamp
-            )
-        FROM
-            {{ this }}
+    ) >= DATEADD(
+        'minute',
+        -45,(
+            SELECT
+                MAX(
+                    modified_timestamp
+                )
+            FROM
+                {{ this }}
+        )
     )
 {% endif %}

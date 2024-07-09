@@ -6,7 +6,7 @@
 WITH last_3_days AS (
 
     SELECT
-        block_id
+        block_date
     FROM
         {{ ref("_max_block_by_date") }}
         qualify ROW_NUMBER() over (
@@ -19,9 +19,9 @@ SELECT
 FROM
     {{ ref('core__fact_transactions') }}
 WHERE
-    block_id >= (
+    block_timestamp :: DATE >= (
         SELECT
-            block_id
+            block_date
         FROM
             last_3_days
     )
