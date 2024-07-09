@@ -38,18 +38,17 @@ WITH b AS (
 
 {% if is_incremental() %}
 WHERE
-  {# modified_timestamp >= DATEADD(
-  'minute',
-  -45,(
-    SELECT
-      MAX(
-        modified_timestamp
-      )
-    FROM
-      {{ this }}
-  )
-) #}
-block_id >= 713035
+  modified_timestamp >= DATEADD(
+    'minute',
+    -45,(
+      SELECT
+        MAX(
+          modified_timestamp
+        )
+      FROM
+        {{ this }}
+    )
+  ) {# block_id >= 713035 #}
 {% endif %}
 ),
 prefinal AS (
