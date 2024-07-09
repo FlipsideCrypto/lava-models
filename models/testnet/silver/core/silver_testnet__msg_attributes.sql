@@ -34,15 +34,16 @@ FROM
   ) b
 
 {% if is_incremental() %}
-modified_timestamp >= DATEADD(
-  'minute',
-  -45,(
-    SELECT
-      MAX(
-        modified_timestamp
-      )
-    FROM
-      {{ this }}
+WHERE
+  modified_timestamp >= DATEADD(
+    'minute',
+    -45,(
+      SELECT
+        MAX(
+          modified_timestamp
+        )
+      FROM
+        {{ this }}
+    )
   )
-)
 {% endif %}
