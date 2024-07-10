@@ -40,7 +40,7 @@ WITH b AS (
 WHERE
   modified_timestamp >= DATEADD(
     'minute',
-    -45,(
+    -5,(
       SELECT
         MAX(
           modified_timestamp
