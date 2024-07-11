@@ -103,9 +103,18 @@ FROM
 WHERE
     GREATEST(
         t.modified_timestamp,
-        b.modified_timestamp,
-        f.modified_timestamp,
-        s.modified_timestamp
+        COALESCE(
+            b.modified_timestamp,
+            '2000-01-01'
+        ),
+        COALESCE(
+            f.modified_timestamp,
+            '2000-01-01'
+        ),
+        COALESCE(
+            s.modified_timestamp,
+            '2000-01-01'
+        )
     ) >= DATEADD(
         'minute',
         -5,(
