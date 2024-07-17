@@ -5,7 +5,7 @@
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
     cluster_by = ['modified_timestamp::DATE','partition_key'],
-    tags = ['core','full_test']
+    tags = ['core','recent_test']
 ) }}
 -- depends_on: {{ ref('bronze__transactions') }}
 WITH base_table AS (

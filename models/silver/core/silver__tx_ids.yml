@@ -1,0 +1,12 @@
+version: 2
+models:
+  - name: silver__tx_ids
+    columns:
+      - name: TX_ID
+        tests: 
+          - dbt_utils.relationships_where:
+              name: dbt_utils_relationships_where_silver__silver_tx_ids_fact_transactions_tx_id
+              to: ref('test_core__transactions_recent')
+              field: tx_id
+              from_condition: "inserted_timestamp::Date >= dateadd('hour',-48,sysdate())"
+              to_condition: "inserted_timestamp::Date >= dateadd('hour',-49,sysdate())"
