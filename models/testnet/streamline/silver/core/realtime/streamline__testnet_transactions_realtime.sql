@@ -88,7 +88,7 @@ numbers AS (
                     'asc'
                 )
             ),
-            'Vault/prod/lava/node/testnet/archive'
+            'Vault/prod/lava/node/testnet/rpc'
         ) AS request,
         page_number,
         block_number AS block_number_requested

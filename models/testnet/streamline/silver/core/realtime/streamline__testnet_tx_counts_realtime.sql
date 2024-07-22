@@ -75,7 +75,7 @@ SELECT
                 'asc'
             )
         ),
-        'Vault/prod/lava/node/testnet/archive'
+        'Vault/prod/lava/node/testnet/rpc'
     ) AS request,
     block_number
 FROM
