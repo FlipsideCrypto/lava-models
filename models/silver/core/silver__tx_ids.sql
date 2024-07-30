@@ -37,11 +37,16 @@ WHERE
     tx_id IS NOT NULL
 
 {% if is_incremental() %}
-AND inserted_timestamp >= (
-    SELECT
-        MAX(modified_timestamp)
-    FROM
-        {{ this }}
+AND inserted_timestamp >= DATEADD(
+    MINUTE,
+    -5,(
+        SELECT
+            MAX(
+                modified_timestamp
+            )
+        FROM
+            {{ this }}
+    )
 )
 {% endif %}
 

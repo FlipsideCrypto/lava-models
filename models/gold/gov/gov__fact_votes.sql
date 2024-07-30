@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     incremental_predicates = ['DBT_INTERNAL_DEST.block_timestamp::DATE >= (select min(block_timestamp::DATE) from ' ~ generate_tmp_view_name(this) ~ ')'],
-    unique_key = "fact_proposal_deposits_id",
+    unique_key = "fact_votes_id",
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
     cluster_by = ['block_timestamp::DATE'],
@@ -16,12 +16,13 @@ WITH base AS (
         block_timestamp,
         tx_id,
         tx_succeeded,
-        depositor,
+        msg_index,
+        voter,
         proposal_id,
-        amount,
-        currency
+        vote_option,
+        vote_weight
     FROM
-        {{ ref('silver__governance_proposal_deposits') }}
+        {{ ref('silver__governance_votes') }}
 
 {% if is_incremental() %}
 WHERE
@@ -39,16 +40,17 @@ SELECT
     block_id,
     block_timestamp,
     tx_id,
+    msg_index,
     tx_succeeded,
-    depositor,
+    voter,
     proposal_id,
-    amount,
-    currency,
+    vote_option,
+    vote_weight,
     {{ dbt_utils.generate_surrogate_key(
-        ['tx_id']
-    ) }} AS fact_proposal_deposits_id,
+        ['tx_id','voter','vote_option','vote_weight']
+    ) }} AS fact_votes_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    basE
+    base

@@ -1,12 +1,13 @@
 {{ config(
     materialized = 'incremental',
     incremental_predicates = ['DBT_INTERNAL_DEST.block_timestamp::DATE >= (select min(block_timestamp::DATE) from ' ~ generate_tmp_view_name(this) ~ ')'],
-    unique_key = "fact_proposal_deposits_id",
+    unique_key = "fact_staking_id",
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
     cluster_by = ['block_timestamp::DATE'],
     meta ={ 'database_tags':{ 'table':{ 'PURPOSE': 'GOVERNANCE' }} },
-    tags = ['noncore','recent_test']
+    tags = ['noncore','recent_test'],
+    enabled = false
 ) }}
 
 WITH base AS (
@@ -16,12 +17,20 @@ WITH base AS (
         block_timestamp,
         tx_id,
         tx_succeeded,
-        depositor,
-        proposal_id,
+        tx_caller_address,
+        action,
+        msg_group,
+        msg_sub_group,
+        msg_index,
+        delegator_address,
         amount,
-        currency
+        currency,
+        validator_address,
+        redelegate_source_validator_address,
+        completion_time,
+        staking_id
     FROM
-        {{ ref('silver__governance_proposal_deposits') }}
+        {{ ref('silver__staking') }}
 
 {% if is_incremental() %}
 WHERE
@@ -40,15 +49,20 @@ SELECT
     block_timestamp,
     tx_id,
     tx_succeeded,
-    depositor,
-    proposal_id,
+    tx_caller_address,
+    action,
+    msg_group,
+    msg_sub_group,
+    msg_index,
+    delegator_address,
     amount,
     currency,
-    {{ dbt_utils.generate_surrogate_key(
-        ['tx_id']
-    ) }} AS fact_proposal_deposits_id,
+    validator_address,
+    redelegate_source_validator_address,
+    completion_time,
+    staking_id AS fact_staking_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    basE
+    base

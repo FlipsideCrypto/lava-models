@@ -18,7 +18,7 @@ WITH base AS (
         modified_timestamp,
         _invocation_id
     FROM
-        {{ ref('core__fact_msg_attributes') }}
+        {{ ref('silver__msg_attributes') }}
     WHERE
         msg_type IN (
             'proposal_deposit',
@@ -51,7 +51,7 @@ proposals AS (
             ' ',
             0
         ) AS amount,
-        RIGHT(amount_raw, LENGTH(amount_raw) - LENGTH(SPLIT_PART(TRIM(REGEXP_REPLACE(amount_raw, '[^[:digit:]]', ' ')), ' ', 0))) AS denom,
+        RIGHT(amount_raw, LENGTH(amount_raw) - LENGTH(SPLIT_PART(TRIM(REGEXP_REPLACE(amount_raw, '[^[:digit:]]', ' ')), ' ', 0))) AS currency,
     FROM
         base
     WHERE
@@ -89,7 +89,7 @@ SELECT
     depositor,
     p.proposal_id,
     p.amount,
-    p.denom,
+    p.currency,
     {{ dbt_utils.generate_surrogate_key(
         ['p.tx_id']
     ) }} AS governance_proposal_deposits_id,

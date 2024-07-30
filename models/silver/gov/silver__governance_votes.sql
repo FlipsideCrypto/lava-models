@@ -10,8 +10,6 @@ WITH base_ma AS (
         block_timestamp,
         tx_id,
         tx_succeeded,
-        msg_group,
-        msg_sub_group,
         msg_index,
         msg_type,
         attribute_key,
@@ -20,26 +18,13 @@ WITH base_ma AS (
         modified_timestamp,
         _invocation_id
     FROM
-        {{ ref('core__fact_msg_attributes') }}
+        {{ ref('silver__msg_attributes') }}
     WHERE
         msg_type IN (
             'message',
             'tx',
             'proposal_vote'
         )
-),
-tx_mg_msg AS (
-    SELECT
-        tx_id,
-        block_timestamp,
-        msg_group,
-        msg_sub_group
-    FROM
-        base_ma
-    WHERE
-        msg_type = 'message'
-        AND attribute_key = 'action'
-        AND attribute_value LIKE '%MsgVote'
 ),
 prop_send AS (
     SELECT
@@ -48,8 +33,6 @@ prop_send AS (
         A.tx_id,
         tx_succeeded,
         A.msg_index,
-        A.msg_group,
-        A.msg_sub_group,
         A.attribute_key,
         A.attribute_value,
         inserted_timestamp,
@@ -57,21 +40,12 @@ prop_send AS (
         _invocation_id
     FROM
         base_ma A
-        JOIN tx_mg_msg b
-        ON A.tx_id = b.tx_id
-        AND A.msg_group = b.msg_group
-        AND A.msg_sub_group = b.msg_sub_group
-        AND A.block_timestamp = b.block_timestamp
     WHERE
-        msg_type IN (
-            'proposal_vote',
-            'message'
-        )
-        AND attribute_key IN (
-            'proposal_id',
-            'voter',
-            'sender'
-        )
+        msg_type = 'proposal_vote' {# AND attribute_key IN (
+        'proposal_id',
+        'voter',
+        'sender'
+) #}
 ),
 vote_op AS (
     SELECT
@@ -80,8 +54,6 @@ vote_op AS (
         A.tx_id,
         tx_succeeded,
         A.msg_index,
-        A.msg_group,
-        A.msg_sub_group,
         A.attribute_key || LEFT(
             b.value,
             3
@@ -107,8 +79,6 @@ vote_msgs AS (
         tx_id,
         tx_succeeded,
         msg_index,
-        msg_group,
-        msg_sub_group,
         attribute_key,
         attribute_value,
         inserted_timestamp,
@@ -123,8 +93,6 @@ vote_msgs AS (
         tx_id,
         tx_succeeded,
         msg_index,
-        msg_group,
-        msg_sub_group,
         attribute_key,
         attribute_value,
         inserted_timestamp,
@@ -139,8 +107,7 @@ agg AS (
         block_timestamp,
         tx_id,
         tx_succeeded,
-        msg_group,
-        msg_sub_group,
+        msg_index,
         inserted_timestamp,
         modified_timestamp,
         _invocation_id,
@@ -163,8 +130,7 @@ agg AS (
         block_timestamp,
         tx_id,
         tx_succeeded,
-        msg_group,
-        msg_sub_group,
+        msg_index,
         inserted_timestamp,
         modified_timestamp,
         _invocation_id
@@ -174,8 +140,7 @@ SELECT
     block_timestamp,
     tx_id,
     tx_succeeded,
-    msg_group,
-    msg_sub_group,
+    msg_index,
     proposal_id,
     voter AS voter_raw,
     COALESCE(
@@ -184,12 +149,8 @@ SELECT
     ) AS voter,
     vote_option,
     vote_weight,
-    {# {{ dbt_utils.generate_surrogate_key(
-    ['tx_id','msg_index','voter','vote_option']
-) }} AS governance_votes_id,
-#}
-inserted_timestamp,
-modified_timestamp,
-_invocation_id
+    inserted_timestamp,
+    modified_timestamp,
+    _invocation_id
 FROM
     agg

@@ -23,9 +23,9 @@ SELECT
   {{ dbt_utils.generate_surrogate_key(
     ['tx_id','msg_index','attribute_index']
   ) }} AS msg_attributes_id,
-  inserted_timestamp,
-  modified_timestamp,
-  _invocation_id
+  SYSDATE() AS inserted_timestamp,
+  SYSDATE() AS modified_timestamp,
+  '{{ invocation_id }}' AS _invocation_id
 FROM
   {{ ref('core__fact_msgs') }} A,
   LATERAL FLATTEN(

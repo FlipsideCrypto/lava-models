@@ -1,0 +1,47 @@
+version: 2
+models:
+  - name: gov__fact_submit_proposal
+    description: Records of all proposal submissions on Lava, dating back to the Genesis block
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - TX_ID
+    columns:
+      - name: BLOCK_ID
+        description: "{{ doc('block_id') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: BLOCK_TIMESTAMP
+        description: "{{ doc('block_timestamp') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: TX_ID
+        description: "{{ doc('tx_id') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: TX_SUCCEEDED
+        description: "{{ doc('tx_succeeded') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: PROPOSER
+        description: "{{ doc('proposer') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: lava@1[0-9a-z]{38,38}
+      - name: PROPOSAL_ID
+        description: "{{ doc('proposal_id') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: FACT_SUBMIT_PROPOSAL_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}'                    

@@ -122,10 +122,10 @@ SELECT
   {{ dbt_utils.generate_surrogate_key(
     ['a.tx_id','a.msg_index']
   ) }} AS msgs_id,
-  inserted_timestamp,
-  modified_timestamp,
+  SYSDATE() AS inserted_timestamp,
+  SYSDATE() AS modified_timestamp,
   partition_key,
-  _invocation_id
+  '{{ invocation_id }}' AS _invocation_id
 FROM
   prefinal A
   LEFT JOIN grp b

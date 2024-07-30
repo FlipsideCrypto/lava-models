@@ -25,7 +25,7 @@ WITH base_atts AS (
         modified_timestamp,
         _invocation_id
     FROM
-        {{ ref('core__fact_msg_attributes') }}
+        {{ ref('silver__msg_attributes') }}
     WHERE
         msg_type IN (
             'tx',
