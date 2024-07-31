@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     incremental_predicates = ["COALESCE(DBT_INTERNAL_DEST.block_timestamp::DATE,'2099-12-31') >= (select min(block_timestamp::DATE) from " ~ generate_tmp_view_name(this) ~ ")"],
-    unique_key = ['tx_id','msg_index'],
+    unique_key = ['tx_id','msg_index','transfer_type'],
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
     cluster_by = ['block_timestamp::DATE'],
@@ -21,7 +21,7 @@ SELECT
     amount,
     currency,
     {{ dbt_utils.generate_surrogate_key(
-        ['tx_id','msg_index']
+        ['tx_id','msg_index','transfer_type']
     ) }} AS fact_transfers_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
@@ -58,7 +58,7 @@ SELECT
     amount,
     currency,
     {{ dbt_utils.generate_surrogate_key(
-        ['tx_id','msg_index']
+        ['tx_id','msg_index','transfer_type']
     ) }} AS fact_transfers_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
