@@ -17,7 +17,7 @@ WITH last_3_days AS (
 SELECT
     *
 FROM
-    {{ ref('core__fact_msg_attributes') }}
+    {{ ref('core_testnet__fact_msg_attributes') }}
 WHERE
     block_timestamp :: DATE >= (
         SELECT

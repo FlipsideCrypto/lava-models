@@ -17,7 +17,7 @@ WITH last_3_days AS (
 SELECT
     *
 FROM
-    {{ ref('core__fact_transactions') }}
+    {{ ref('core_testnet__fact_transactions') }}
 WHERE
     block_id >= (
         SELECT

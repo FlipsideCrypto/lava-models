@@ -8,5 +8,5 @@ models:
               name: dbt_utils_relationships_where_silver__silver_tx_ids_fact_transactions_tx_id
               to: ref('test_core__transactions_recent')
               field: tx_id
-              from_condition: "inserted_timestamp::Date >= dateadd('hour',-48,sysdate())"
+              from_condition: "inserted_timestamp::Date >= dateadd('hour',-48,sysdate()) and inserted_timestamp < DATEADD('hour',-1,sysdate())"
               to_condition: "inserted_timestamp::Date >= dateadd('hour',-49,sysdate())"

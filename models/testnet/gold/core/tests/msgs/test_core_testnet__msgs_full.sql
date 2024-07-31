@@ -6,4 +6,4 @@
 SELECT
     *
 FROM
-    {{ ref('core__fact_msgs') }}
+    {{ ref('core_testnet__fact_msgs') }}
