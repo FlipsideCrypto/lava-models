@@ -3,9 +3,9 @@ run-name: dbt_test_recent
 
 on:
   workflow_dispatch:
-  schedule:
-    # Daily at 8:30am UTC
-    - cron: '30 8 * * *'
+  # schedule:
+  #   # Daily at 8:30am UTC
+  #   - cron: '30 8 * * *'
 
 env:
   USE_VARS: "${{ vars.USE_VARS }}"
