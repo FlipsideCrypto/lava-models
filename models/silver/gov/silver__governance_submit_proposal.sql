@@ -1,5 +1,10 @@
 {{ config(
-    materialized = 'view',
+    materialized = 'incremental',
+    incremental_predicates = ['DBT_INTERNAL_DEST.block_timestamp::DATE >= (select min(block_timestamp::DATE) from ' ~ generate_tmp_view_name(this) ~ ')'],
+    unique_key = "governance_submit_proposal_id",
+    incremental_strategy = 'merge',
+    merge_exclude_columns = ["inserted_timestamp"],
+    cluster_by = ['block_timestamp::DATE'],
     tags = ['noncore','recent_test']
 ) }}
 
@@ -13,10 +18,7 @@ WITH base AS (
         msg_type,
         msg_index,
         attribute_value,
-        attribute_key,
-        inserted_timestamp,
-        modified_timestamp,
-        _invocation_id
+        attribute_key
     FROM
         {{ ref('silver__msg_attributes') }}
     WHERE
@@ -24,6 +26,17 @@ WITH base AS (
             'submit_proposal',
             'tx'
         )
+
+{% if is_incremental() %}
+AND modified_timestamp >= (
+    SELECT
+        MAX(
+            modified_timestamp
+        )
+    FROM
+        {{ this }}
+)
+{% endif %}
 ),
 proposals AS (
     SELECT
@@ -31,9 +44,6 @@ proposals AS (
         block_id,
         block_timestamp,
         tx_succeeded,
-        inserted_timestamp,
-        modified_timestamp,
-        _invocation_id,
         OBJECT_AGG(
             attribute_key :: STRING,
             attribute_value :: variant
@@ -48,10 +58,7 @@ proposals AS (
         tx_id,
         block_id,
         block_timestamp,
-        tx_succeeded,
-        inserted_timestamp,
-        modified_timestamp,
-        _invocation_id
+        tx_succeeded
 ),
 proposer AS (
     SELECT
@@ -80,9 +87,9 @@ SELECT
     {{ dbt_utils.generate_surrogate_key(
         ['p.tx_id']
     ) }} AS governance_submit_proposal_id,
-    inserted_timestamp,
-    modified_timestamp,
-    _invocation_id
+    SYSDATE() AS inserted_timestamp,
+    SYSDATE() AS modified_timestamp,
+    '{{ invocation_id }}' AS _invocation_id
 FROM
     proposals p
     INNER JOIN proposer pp

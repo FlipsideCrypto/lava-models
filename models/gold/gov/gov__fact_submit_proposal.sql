@@ -19,35 +19,69 @@ WITH base AS (
         proposer,
         proposal_id,
         proposal_messages,
-        governance_submit_proposal_id
+        modified_timestamp
     FROM
         {{ ref('silver__governance_submit_proposal') }}
-
-{% if is_incremental() %}
-WHERE
-    modified_timestamp >= (
-        SELECT
-            MAX(
-                modified_timestamp
-            )
-        FROM
-            {{ this }}
-    )
-{% endif %}
+),
+bdy AS (
+    SELECT
+        tx_id,
+        TYPE,
+        proposer,
+        expedited,
+        title,
+        summary,
+        memo,
+        details,
+        modified_timestamp
+    FROM
+        {{ ref('silver__governance_submit_proposal_tx_body') }}
 )
 SELECT
     block_id,
     block_timestamp,
-    tx_id,
+    A.tx_id,
     tx_succeeded,
-    proposer,
+    COALESCE(
+        A.proposer,
+        b.proposer
+    ) AS proposer,
     proposal_id,
     proposal_messages,
+    TYPE,
+    expedited,
+    title,
+    summary,
+    memo,
+    details,
     {{ dbt_utils.generate_surrogate_key(
-        ['tx_id']
+        ['a.tx_id']
     ) }} AS fact_submit_proposal_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
     '{{ invocation_id }}' AS _invocation_id
 FROM
-    base
+    base A
+    LEFT JOIN bdy b
+    ON A.tx_id = b.tx_id
+
+{% if is_incremental() %}
+WHERE
+    GREATEST(
+        A.modified_timestamp,
+        COALESCE(
+            A.modified_timestamp,
+            '2000-01-01'
+        )
+    ) >= DATEADD(
+        'minute',
+        -5,(
+            SELECT
+                MAX(
+                    modified_timestamp
+                )
+            FROM
+                {{ this }}
+        )
+    )
+{% endif %}
