@@ -62,7 +62,7 @@ bronze AS (
 
 {% if is_incremental() %}
 WHERE
-    A._inserted_timestamp >= CURRENT_DATE - 14
+    A.inserted_timestamp >= CURRENT_DATE - 14
     OR {% if var('OBSERV_FULL_TEST') %}
         1 = 1
     {% else %}

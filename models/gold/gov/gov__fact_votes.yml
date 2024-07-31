@@ -1,0 +1,57 @@
+version: 2
+models:
+  - name: gov__fact_votes
+    description: Records of all votes on proposals.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - TX_ID
+            - MSG_INDEX
+    columns:
+      - name: BLOCK_ID
+        description: "{{ doc('block_id') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: BLOCK_TIMESTAMP
+        description: "{{ doc('block_timestamp') }}"
+        tests:
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: TX_ID
+        description: "{{ doc('tx_id') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: TX_SUCCEEDED
+        description: "{{ doc('tx_succeeded') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: MSG_INDEX
+        description: "{{ doc('msg_index') }}"
+      - name: VOTER
+        description: "{{ doc('voter') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: PROPOSAL_ID
+        description: "{{ doc('proposal_id') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: VOTE_OPTION
+        description: "{{ doc('vote_option') }}"
+        tests: 
+          - dbt_expectations.expect_column_to_exist
+          - not_null
+      - name: VOTE_WEIGHT
+        description: The percentage of one's delegation put towards a voting option. 1 = 100%, etc. 
+        tests: 
+          - not_null
+      - name: FACT_VOTES_ID
+        description: '{{ doc("pk") }}'   
+      - name: INSERTED_TIMESTAMP
+        description: '{{ doc("inserted_timestamp") }}'   
+      - name: MODIFIED_TIMESTAMP
+        description: '{{ doc("modified_timestamp") }}'                      
