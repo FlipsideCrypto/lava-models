@@ -49,7 +49,7 @@ SELECT
                 block_number :: STRING
             )
         ),
-        'Vault/prod/lava/node/testnet/rpc'
+        'Vault/prod/lava/node/testnet/archive'
     ) AS request
 FROM
     blocks
