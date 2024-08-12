@@ -5,9 +5,9 @@
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
     cluster_by = ['block_timestamp::DATE'],
+    post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_id,tx_caller_address,delegator_address,validator_address);",
     meta ={ 'database_tags':{ 'table':{ 'PURPOSE': 'GOVERNANCE' }} },
-    tags = ['noncore','recent_test'],
-    enabled = false
+    tags = ['noncore','recent_test']
 ) }}
 
 WITH base AS (
@@ -28,6 +28,13 @@ WITH base AS (
         validator_address,
         redelegate_source_validator_address,
         completion_time,
+        creation_height,
+        chain_id,
+        from_chain_id,
+        to_chain_id,
+        provider,
+        from_provider,
+        to_provider,
         staking_id
     FROM
         {{ ref('silver__staking') }}
@@ -60,6 +67,13 @@ SELECT
     validator_address,
     redelegate_source_validator_address,
     completion_time,
+    creation_height,
+    chain_id,
+    from_chain_id,
+    to_chain_id,
+    provider,
+    from_provider,
+    to_provider,
     staking_id AS fact_staking_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,

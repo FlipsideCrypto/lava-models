@@ -1,7 +1,6 @@
 {{ config(
     materialized = 'view',
-    tags = ['noncore','recent_test'],
-    enabled = false
+    tags = ['noncore','recent_test']
 ) }}
 
 WITH base AS (
@@ -28,10 +27,11 @@ WITH base AS (
             'redelegate',
             'unbond',
             'create_validator',
-            {# 'cancel_unbonding_delegation',
-            'lava_delegate_to_provider' #},
+            'cancel_unbonding_delegation',
+            'lava_delegate_to_provider',
+            'lava_redelegate_between_providers',
+            'lava_unbond_from_provider',
             'tx',
-            {# 'coin_spent', #}
             'message'
         )
 ),
@@ -89,21 +89,18 @@ valid AS (
             0
         ) AS amount,
         RIGHT(amount_raw, LENGTH(amount_raw) - LENGTH(SPLIT_PART(TRIM(REGEXP_REPLACE(amount_raw, '[^[:digit:]]', ' ')), ' ', 0))) AS currency,
-        ROW_NUMBER() over (
-            PARTITION BY tx_id,
-            msg_group,
-            msg_sub_group
-            ORDER BY
-                msg_index DESC
-        ) AS del_rank
+        j: chainID :: STRING AS chain_id,
+        j: from_chainID :: STRING AS from_chain_id,
+        j: to_chainID :: STRING AS to_chain_id,
+        j: provider :: STRING AS provider,
+        j: from_provider :: STRING AS from_provider,
+        j: to_provider :: STRING AS to_provider
     FROM
         base A
     WHERE
-        msg_type IN (
-            'delegate',
-            'redelegate',
-            'unbond',
-            'create_validator'
+        msg_type NOT IN (
+            'tx',
+            'message'
         )
     GROUP BY
         block_id,
@@ -121,17 +118,33 @@ SELECT
     A.tx_id,
     A.tx_succeeded,
     b.tx_caller_address,
-    action,
+    msg_type AS action,
     A.msg_group,
     A.msg_sub_group,
     A.msg_index,
-    A.delegator_address,
+    COALESCE(
+        A.delegator_address,
+        b.tx_caller_address
+    ) AS delegator_address,
     A.amount :: INT AS amount,
     A.currency,
-    A.validator_address,
-    A.redelegate_source_validator_address,
+    COALESCE(
+        A.validator_address,
+        A.provider,
+        A.to_provider
+    ) AS validator_address,
+    COALESCE(
+        A.redelegate_source_validator_address,
+        from_provider
+    ) AS redelegate_source_validator_address,
     A.completion_time :: datetime AS completion_time,
     A.creation_height,
+    chain_id,
+    from_chain_id,
+    to_chain_id,
+    provider,
+    from_provider,
+    to_provider,
     {{ dbt_utils.generate_surrogate_key(
         ['a.tx_id', 'a.msg_index']
     ) }} AS staking_id,
@@ -142,3 +155,5 @@ FROM
     valid A
     JOIN tx_address b
     ON A.tx_id = b.tx_id
+WHERE
+    currency IS NOT NULL

@@ -1,7 +1,6 @@
 {{ config(
     materialized = 'view',
-    tags = ['noncore','recent_test'],
-    enabled = false
+    tags = ['noncore','recent_test']
 ) }}
 
 WITH msg_attributes AS (
@@ -9,8 +8,6 @@ WITH msg_attributes AS (
     SELECT
         tx_id,
         msg_type,
-        msg_group,
-        msg_sub_group,
         msg_index,
         attribute_key,
         attribute_value,
@@ -25,9 +22,6 @@ WITH msg_attributes AS (
     WHERE
         msg_type IN(
             'withdraw_rewards',
-            {# 'transfer',
-            'message',
-            #}
             'tx'
         )
 ),
@@ -35,8 +29,6 @@ reroll_msg AS (
     SELECT
         tx_id,
         msg_type,
-        msg_group,
-        msg_sub_group,
         msg_index,
         block_id,
         block_timestamp,
@@ -58,8 +50,6 @@ reroll_msg AS (
     GROUP BY
         tx_id,
         msg_type,
-        msg_group,
-        msg_sub_group,
         msg_index,
         block_id,
         block_timestamp,
@@ -107,7 +97,7 @@ prefinal AS (
             ),
             ' ',
             0
-        ) AS amount,
+        ) :: INT AS amount,
         RIGHT(amount_raw, LENGTH(amount_raw) - LENGTH(SPLIT_PART(TRIM(REGEXP_REPLACE(amount_raw, '[^[:digit:]]', ' ')), ' ', 0))) AS currency,
         A.validator_address,
         inserted_timestamp,

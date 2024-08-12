@@ -29,6 +29,15 @@ There is more information on how to use dbt docs in the last section of this doc
 - [fact_transactions](#!/model/model.lava_models.core__fact_transactions)
 - [fact_transfers](#!/model/model.lava_models.core__fact_transfers)
 
+### Goc Tables (`lava`.`GOV`.`<table_name>`)
+
+**Fact Tables:**
+- [fact_submit_proposal](#!/model/model.lava_models.gov__fact_submit_proposal)
+- [fact_proposal_deposits](#!/model/model.lava_models.gov__fact_proposal_deposits)
+- [fact_votes](#!/model/model.lava_models.gov__fact_votes)
+- [fact_staking](#!/model/model.lava_models.gov__fact_staking)
+- [fact_staking_rewards](#!/model/model.lava_models.gov__fact_staking_rewards)
+
 
 ### Core TESTNET Tables (`lava`.`CORE_TESTNET`.`<table_name>`)
 
