@@ -26,7 +26,7 @@ WITH base AS (
 WHERE
     inserted_timestamp >= DATEADD(
         MINUTE,
-        -5,(
+        -15,(
             SELECT
                 MAX(
                     modified_timestamp
