@@ -29,7 +29,8 @@ There is more information on how to use dbt docs in the last section of this doc
 - [fact_transactions](#!/model/model.lava_models.core__fact_transactions)
 - [fact_transfers](#!/model/model.lava_models.core__fact_transfers)
 
-### Goc Tables (`lava`.`GOV`.`<table_name>`)
+
+### Gov Tables (`lava`.`GOV`.`<table_name>`)
 
 **Fact Tables:**
 - [fact_submit_proposal](#!/model/model.lava_models.gov__fact_submit_proposal)
@@ -37,6 +38,20 @@ There is more information on how to use dbt docs in the last section of this doc
 - [fact_votes](#!/model/model.lava_models.gov__fact_votes)
 - [fact_staking](#!/model/model.lava_models.gov__fact_staking)
 - [fact_staking_rewards](#!/model/model.lava_models.gov__fact_staking_rewards)
+
+
+### Price Tables (`lava`.`PRICE`.`<table_name>`)
+
+**Dimension Tables:**
+- [dim_asset_metadata](#!/model/model.lava_models.price__dim_asset_metadata)
+
+**Fact Tables:**
+- [Fact_prices_ohlc_hourly](#!/model/model.lava_models.price__fact_prices_ohlc_hourly)
+
+**Convenience Tables:**
+- [ez_asset_metadata](#!/model/model.lava_models.price__ez_asset_metadata)
+- [ez_prices_hourly](#!/model/model.lava_models.price__ez_prices_hourly)
+ 
 
 
 ### Core TESTNET Tables (`lava`.`CORE_TESTNET`.`<table_name>`)
