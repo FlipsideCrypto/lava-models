@@ -46,11 +46,11 @@ There is more information on how to use dbt docs in the last section of this doc
 - [dim_asset_metadata](#!/model/model.lava_models.price__dim_asset_metadata)
 
 **Fact Tables:**
-- [Fact_prices_ohlc_hourly](#!/model/model.lava_models.price__price__fact_prices_ohlc_hourly)
+- [Fact_prices_ohlc_hourly](#!/model/model.lava_models.price__fact_prices_ohlc_hourly)
 
 **Convenience Tables:**
-- [ez_asset_metadata](#!/model/model.lava_models.price__price__ez_asset_metadata)
-- [ez_prices_hourly](#!/model/model.lava_models.price__price__ez_prices_hourly)
+- [ez_asset_metadata](#!/model/model.lava_models.price__ez_asset_metadata)
+- [ez_prices_hourly](#!/model/model.lava_models.price__ez_prices_hourly)
  
 
 
