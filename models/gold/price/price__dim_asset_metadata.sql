@@ -1,14 +1,15 @@
 {{ config(
     materialized = 'view',
     persist_docs ={ "relation": true,
-    "columns": true }
+    "columns": true },
+    tags = ['noncore','recent_test']
 ) }}
 
 SELECT
     token_address,
     asset_id,
     symbol,
-    name,
+    NAME,
     platform AS blockchain,
     platform_id AS blockchain_id,
     provider,
