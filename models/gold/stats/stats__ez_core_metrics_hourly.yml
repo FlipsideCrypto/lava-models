@@ -2,31 +2,93 @@ version: 2
 models:
   - name: stats__ez_core_metrics_hourly
     description: '{{ doc("ez_core_metrics_hourly_table_doc") }}'
-
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - BLOCK_TIMESTAMP_HOUR
     columns:
       - name: BLOCK_TIMESTAMP_HOUR
         description: '{{ doc("block_timestamp_hour") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - TIMESTAMP_LTZ
+                - TIMESTAMP_NTZ
       - name: BLOCK_NUMBER_MIN
         description: '{{ doc("block_id_min") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER
+                - FLOAT
       - name: BLOCK_NUMBER_MAX
         description: '{{ doc("block_id_max") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER
+                - FLOAT
       - name: BLOCK_COUNT
         description: '{{ doc("block_count") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER
+                - FLOAT
       - name: TRANSACTION_COUNT
         description: '{{ doc("transaction_count") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER
+                - FLOAT
       - name: TRANSACTION_COUNT_SUCCESS
         description: '{{ doc("transaction_count_success") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER
+                - FLOAT
       - name: TRANSACTION_COUNT_FAILED
         description: '{{ doc("transaction_count_failed") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER
+                - FLOAT
       - name: UNIQUE_FROM_COUNT
         description: '{{ doc("unique_from_count") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - NUMBER
+                - FLOAT
       - name: TOTAL_FEES_NATIVE
         description: '{{ doc("total_fees_native") }}'
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_type_list:
+              column_type_list:
+                - DECIMAL
+                - FLOAT
+                - NUMBER
       - name: TOTAL_FEES_USD
         description: '{{ doc("total_fees_usd") }}'
       - name: EZ_CORE_METRICS_HOURLY_ID
         description: '{{ doc("pk") }}'   
       - name: INSERTED_TIMESTAMP
         description: '{{ doc("inserted_timestamp") }}'   
+        tests:
+          - dbt_expectations.expect_row_values_to_have_recent_data:
+              datepart: day
+              interval: 1
       - name: MODIFIED_TIMESTAMP
         description: '{{ doc("modified_timestamp") }}' 
