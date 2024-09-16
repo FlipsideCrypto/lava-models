@@ -1,11 +1,11 @@
-name: dbt_run_core
-run-name: dbt_run_core
+name: dbt_run_core_testnet
+run-name: dbt_run_core_testnet
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   # Runs "at minute 7 and 37, every hour" (see https://crontab.guru)
-  #   - cron: '10 * * * *'
+  schedule:
+    # Runs "at minute 7 and 37, every hour" (see https://crontab.guru)
+    - cron: '17 7 * * *'
 
 env:
   USE_VARS: "${{ vars.USE_VARS }}"
@@ -43,4 +43,4 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -m "lava_models,tag:core" 
+          dbt run -m "lava_models,tag:core_testnet"
