@@ -22,7 +22,7 @@ WITH blocks AS (
         {{ ref("streamline__testnet_tx_counts_complete") }} A
     WHERE
         tx_count > 0
-        AND block_number <> 714114
+        AND block_number > 1970000
 ),
 numbers AS (
     -- Recursive CTE to generate numbers. We'll use the maximum txcount value to limit our recursion.

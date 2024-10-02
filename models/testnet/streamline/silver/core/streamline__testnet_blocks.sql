@@ -11,7 +11,7 @@ FROM
         'number_sequence'
     ) }}
 WHERE
-    _id >= 713023
+    _id >= 1970000
     AND _id <= (
         SELECT
             MAX(block_number)
