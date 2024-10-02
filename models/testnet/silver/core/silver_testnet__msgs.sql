@@ -5,7 +5,7 @@
   incremental_strategy = 'merge',
   merge_exclude_columns = ["inserted_timestamp"],
   cluster_by = ['modified_timestamp::DATE','partition_key'],
-  tags = ['core_testnet','full_test']
+  tags = ['core_testnet']
 ) }}
 {# post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(msg_type, msg:attributes);", #}
 WITH b AS (

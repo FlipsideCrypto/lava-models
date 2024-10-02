@@ -4,7 +4,7 @@
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
     cluster_by = ['block_timestamp::DATE'],
-    tags = ['core_testnet','recent_test']
+    tags = ['core_testnet']
 ) }}
 -- depends_on: {{ ref('bronze_testnet__blockchain') }}
 WITH base AS (

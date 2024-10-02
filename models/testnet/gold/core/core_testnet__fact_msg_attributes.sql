@@ -6,7 +6,7 @@
   merge_exclude_columns = ["inserted_timestamp"],
   cluster_by = ['block_timestamp::DATE','modified_timestamp::DATE'],
   post_hook = "ALTER TABLE {{ this }} ADD SEARCH OPTIMIZATION ON EQUALITY(tx_id,msg_type,attribute_key,attribute_value);",
-  tags = ['core_testnet','full_test']
+  tags = ['core_testnet']
 ) }}
 
 SELECT

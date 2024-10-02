@@ -5,7 +5,7 @@
     incremental_strategy = 'merge',
     merge_exclude_columns = ["inserted_timestamp"],
     cluster_by = ['block_timestamp::DATE'],
-    tags = ['core_testnet','full_test']
+    tags = ['core_testnet']
 ) }}
 
 WITH atts AS (
