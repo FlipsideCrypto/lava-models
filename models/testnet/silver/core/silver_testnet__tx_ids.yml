@@ -10,3 +10,5 @@ models:
               field: tx_id
               from_condition: "inserted_timestamp::Date >= dateadd('hour',-48,sysdate()) and inserted_timestamp < DATEADD('hour',-1,sysdate())"
               to_condition: "inserted_timestamp::Date >= dateadd('hour',-49,sysdate())"
+              config:
+                severity: warn
