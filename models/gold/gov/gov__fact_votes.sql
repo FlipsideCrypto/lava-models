@@ -47,7 +47,7 @@ SELECT
     vote_option,
     vote_weight,
     {{ dbt_utils.generate_surrogate_key(
-        ['tx_id','voter','vote_option','vote_weight']
+        ['tx_id','msg_index']
     ) }} AS fact_votes_id,
     SYSDATE() AS inserted_timestamp,
     SYSDATE() AS modified_timestamp,
