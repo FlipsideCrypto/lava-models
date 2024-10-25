@@ -25,4 +25,6 @@ FROM
         'complete_token_asset_metadata'
     ) }}
 WHERE
-    asset_id = 'lava-network'
+    asset_id = 'lava-network' qualify(ROW_NUMBER() over(PARTITION BY asset_id
+ORDER BY
+    is_deprecated, blockchain_id) = 1)
