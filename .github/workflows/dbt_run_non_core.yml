@@ -43,4 +43,4 @@ jobs:
           dbt deps
       - name: Run DBT Jobs
         run: |
-          dbt run -m "lava_models,tag:noncore"
+          dbt run -m "lava_models,tag:noncore" --exclude models/testnet
